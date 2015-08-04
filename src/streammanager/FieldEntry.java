@@ -11,6 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.UIManager;
+import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.awt.event.ActionEvent;
 
 public class FieldEntry extends JFrame {
 
@@ -19,10 +23,18 @@ public class FieldEntry extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
+	private JTextField leftTitleField;
+	private JTextField rightTitleField;
+	private JTextField leftNameField;
+	private JTextField rightNameField;
+	private int leftWins;
+	private int rightWins;
+	private FileWriter leftTitleWriter;
+	private FileWriter rightTitleWriter;
+	private FileWriter leftPlayerWriter;
+	private FileWriter rightPlayerWriter;
+	private FileWriter leftWinsWriter;
+	private FileWriter rightWinsWriter;
 
 	/**
 	 * Launch the application.
@@ -49,10 +61,12 @@ public class FieldEntry extends JFrame {
 	 * Create the frame.
 	 */
 	public FieldEntry() {
+		leftWins = 0;
+		rightWins = 0;
 		setTitle("Stream Manager");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 159);
+		setBounds(100, 100, 450, 194);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -67,59 +81,116 @@ public class FieldEntry extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblLeftTitle, 10, SpringLayout.WEST, contentPane);
 		contentPane.add(lblLeftTitle);
 		
-		textField = new JTextField();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, textField, -3, SpringLayout.NORTH, lblLeftTitle);
-		sl_contentPane.putConstraint(SpringLayout.WEST, textField, 14, SpringLayout.EAST, lblLeftTitle);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		leftTitleField = new JTextField();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, leftTitleField, -3, SpringLayout.NORTH, lblLeftTitle);
+		sl_contentPane.putConstraint(SpringLayout.WEST, leftTitleField, 14, SpringLayout.EAST, lblLeftTitle);
+		contentPane.add(leftTitleField);
+		leftTitleField.setColumns(10);
 		
 		JLabel lblRightTitle = new JLabel("Right Title");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRightTitle, 0, SpringLayout.NORTH, lblLeftTitle);
 		sl_contentPane.putConstraint(SpringLayout.EAST, lblRightTitle, -10, SpringLayout.EAST, contentPane);
 		contentPane.add(lblRightTitle);
 		
-		textField_1 = new JTextField();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, textField_1, -3, SpringLayout.NORTH, lblLeftTitle);
-		contentPane.add(textField_1);
-		textField_1.setColumns(10);
+		rightTitleField = new JTextField();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, rightTitleField, -3, SpringLayout.NORTH, lblLeftTitle);
+		contentPane.add(rightTitleField);
+		rightTitleField.setColumns(10);
 		
 		JLabel lblLeftName = new JLabel("Left Name");
 		sl_contentPane.putConstraint(SpringLayout.WEST, lblLeftName, 0, SpringLayout.WEST, lblLeftTitle);
 		contentPane.add(lblLeftName);
 		
-		textField_2 = new JTextField();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, lblLeftName, 3, SpringLayout.NORTH, textField_2);
-		sl_contentPane.putConstraint(SpringLayout.EAST, textField_2, 0, SpringLayout.EAST, textField);
-		contentPane.add(textField_2);
-		textField_2.setColumns(10);
+		leftNameField = new JTextField();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, lblLeftName, 3, SpringLayout.NORTH, leftNameField);
+		sl_contentPane.putConstraint(SpringLayout.EAST, leftNameField, 0, SpringLayout.EAST, leftTitleField);
+		contentPane.add(leftNameField);
+		leftNameField.setColumns(10);
 		
-		textField_3 = new JTextField();
-		sl_contentPane.putConstraint(SpringLayout.NORTH, textField_2, 0, SpringLayout.NORTH, textField_3);
-		sl_contentPane.putConstraint(SpringLayout.NORTH, textField_3, 3, SpringLayout.SOUTH, textField_1);
-		sl_contentPane.putConstraint(SpringLayout.WEST, textField_1, 0, SpringLayout.WEST, textField_3);
-		contentPane.add(textField_3);
-		textField_3.setColumns(10);
+		rightNameField = new JTextField();
+		sl_contentPane.putConstraint(SpringLayout.NORTH, leftNameField, 0, SpringLayout.NORTH, rightNameField);
+		sl_contentPane.putConstraint(SpringLayout.NORTH, rightNameField, 3, SpringLayout.SOUTH, rightTitleField);
+		sl_contentPane.putConstraint(SpringLayout.WEST, rightTitleField, 0, SpringLayout.WEST, rightNameField);
+		contentPane.add(rightNameField);
+		rightNameField.setColumns(10);
 		
 		JLabel lblRightName = new JLabel("Right Name");
 		sl_contentPane.putConstraint(SpringLayout.NORTH, lblRightName, 9, SpringLayout.SOUTH, lblRightTitle);
-		sl_contentPane.putConstraint(SpringLayout.EAST, textField_3, -6, SpringLayout.WEST, lblRightName);
+		sl_contentPane.putConstraint(SpringLayout.EAST, rightNameField, -6, SpringLayout.WEST, lblRightName);
 		sl_contentPane.putConstraint(SpringLayout.EAST, lblRightName, 0, SpringLayout.EAST, lblRightTitle);
 		contentPane.add(lblRightName);
 		
 		JButton btnLeftIncrement = new JButton("Left Increment");
-		sl_contentPane.putConstraint(SpringLayout.NORTH, btnLeftIncrement, 6, SpringLayout.SOUTH, textField_2);
+		btnLeftIncrement.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				leftWins++;
+				try {
+					leftWinsWriter = new FileWriter("leftWins.txt");
+					leftWinsWriter.write(leftWins);
+					leftWinsWriter.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		sl_contentPane.putConstraint(SpringLayout.NORTH, btnLeftIncrement, 6, SpringLayout.SOUTH, leftNameField);
 		sl_contentPane.putConstraint(SpringLayout.WEST, btnLeftIncrement, 0, SpringLayout.WEST, lblLeftTitle);
 		contentPane.add(btnLeftIncrement);
 		
 		JButton btnRightIncrement = new JButton("Right Increment");
+		btnRightIncrement.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				rightWins++;
+				try {
+					leftWinsWriter = new FileWriter("leftWins.txt");
+					leftWinsWriter.write(leftWins);
+					leftWinsWriter.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnRightIncrement, 0, SpringLayout.SOUTH, btnLeftIncrement);
 		sl_contentPane.putConstraint(SpringLayout.EAST, btnRightIncrement, 0, SpringLayout.EAST, lblRightTitle);
 		contentPane.add(btnRightIncrement);
 		
 		JButton button = new JButton("<- SWAP ->");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String tempName = leftNameField.getText();
+				leftNameField.setText(rightNameField.getText());
+				rightNameField.setText(tempName);
+				int temp = leftWins;
+				leftWins = rightWins;
+				rightWins = temp;
+			}
+		});
 		sl_contentPane.putConstraint(SpringLayout.NORTH, button, 0, SpringLayout.NORTH, btnLeftIncrement);
 		sl_contentPane.putConstraint(SpringLayout.WEST, button, 6, SpringLayout.EAST, btnLeftIncrement);
 		sl_contentPane.putConstraint(SpringLayout.EAST, button, -6, SpringLayout.WEST, btnRightIncrement);
 		contentPane.add(button);
+		
+		JButton btnUpdate = new JButton("UPDATE NAMES");
+		sl_contentPane.putConstraint(SpringLayout.WEST, btnUpdate, 0, SpringLayout.WEST, lblLeftName);
+		sl_contentPane.putConstraint(SpringLayout.EAST, btnUpdate, 0, SpringLayout.EAST, leftTitleField);
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Write all to files
+			}
+		});
+		sl_contentPane.putConstraint(SpringLayout.NORTH, btnUpdate, 11, SpringLayout.SOUTH, btnLeftIncrement);
+		contentPane.add(btnUpdate);
+		
+		JButton btnNewSet = new JButton("NEW SET");
+		btnNewSet.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		sl_contentPane.putConstraint(SpringLayout.WEST, btnNewSet, 0, SpringLayout.WEST, rightTitleField);
+		sl_contentPane.putConstraint(SpringLayout.SOUTH, btnNewSet, -2, SpringLayout.SOUTH, contentPane);
+		sl_contentPane.putConstraint(SpringLayout.EAST, btnNewSet, 0, SpringLayout.EAST, lblRightTitle);
+		contentPane.add(btnNewSet);
 	}
 }
